@@ -1,0 +1,131 @@
+﻿<Window x:Class="分区助手.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:分区助手"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1200">
+    <Window.Resources>
+        <Storyboard x:Key="OnGotFocus1"/>
+    </Window.Resources>
+    <Grid Background="{StaticResource HeavyBackgroundColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="11*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!--磁盘列表栏-->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="25*"/>
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="12" Padding="10,3,3,0" Style="{StaticResource HighlightTextBlockStyle}">磁盘驱动器</TextBlock>
+            <ListBox x:Name="driveListBox" BorderThickness="0"  Grid.Row="1"
+                 SelectionMode="Single" SelectionChanged="driveListBox_SelectionChanged"
+                 Background="{StaticResource MediumBackgroundColor}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding Path=diskname}" FontSize="16" Foreground="White"></TextBlock>
+                            <TextBlock Text="{Binding Path=model}" FontSize="12"  Foreground="White" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Grid.Row="2" FontSize="12" Padding="10,3,3,0"  Style="{StaticResource HighlightTextBlockStyle}">分区列表</TextBlock>
+            <ListBox Grid.Row="3" x:Name="partitionList" 
+                     SelectionChanged="partitionList_SelectionChanged"
+                     Background="{StaticResource MediumBackgroundColor}" BorderThickness="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" FontSize="12" Foreground="White">分区信息</TextBlock>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                <TextBlock  Style="{StaticResource MainTextBlockStyle}">扇区起始:</TextBlock>
+                                <TextBlock Text="{Binding Path=StartSector}"  Style="{StaticResource MainTextBlockStyle}"></TextBlock>
+                                <TextBlock  Style="{StaticResource MainTextBlockStyle}">分区长:</TextBlock>
+                                <TextBlock Text="{Binding Path=SectorCount}"  Style="{StaticResource MainTextBlockStyle}"></TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <!--底栏-->
+        <TextBlock x:Name="output" Grid.Row="2" Grid.Column="0" VerticalAlignment="Stretch"
+                   Background="{StaticResource ThemeColor}" Foreground="White" Padding="10,3,0,3"></TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="1"
+                   Background="{StaticResource ThemeColor}" Foreground="White"></TextBlock>
+        
+        
+        <TextBlock Grid.Column="1" x:Name="diskName" Margin="5"></TextBlock>
+
+        <!--左侧信息栏-->
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Vertical">
+                <TextBlock Margin="5" Style="{StaticResource MainTextBlockStyle}">硬盘大小</TextBlock>
+                <TextBlock x:Name="totalSize" Height="20" Style="{StaticResource MainTextBlockStyle}"></TextBlock>
+                <TextBlock Margin="5" Style="{StaticResource MainTextBlockStyle}">分区数</TextBlock>
+                <TextBlock x:Name="partitionCount" Height="20" Style="{StaticResource MainTextBlockStyle}"></TextBlock>
+                <TextBlock FontSize="20" Margin="5,5,5,0"  Style="{StaticResource MainTextBlockStyle}">新建分区信息：</TextBlock>
+                <TextBlock Margin="5,5,5,0"  Style="{StaticResource MainTextBlockStyle}">分区大小(MB)</TextBlock>
+                <TextBox x:Name="newSizeTextBox" Margin="5" Width="100" HorizontalAlignment="Left" ></TextBox>
+                <TextBlock Margin="5,5,5,0"  Style="{StaticResource MainTextBlockStyle}">文件系统(预留)</TextBlock>
+                <ComboBox x:Name="fileSystemPicker" Width="80" HorizontalAlignment="Left" Margin="5" SelectedIndex="0">
+                    <ComboBoxItem>NTFS</ComboBoxItem>
+                    <ComboBoxItem>EFI</ComboBoxItem>
+                    <ComboBoxItem>Empty</ComboBoxItem>
+                    <ComboBoxItem>MicrosoftReserve</ComboBoxItem>
+                </ComboBox>
+                               
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="Add">添加</Button>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="DropMission">撤销所有</Button>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="ImportIPL">导入IPL</Button>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="BuildPartition">开始分区</Button>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="Erase" BorderBrush="Red" Background="Red" Foreground="White">全盘擦除</Button>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+                <TextBlock FontSize="20" Padding="5,10,5,0"  Style="{StaticResource MainTextBlockStyle}">分区任务：</TextBlock>
+                <ListView x:Name="missonListView" Width="80" HorizontalAlignment="Left" Margin="5" Background="{StaticResource HeavyBackgroundColor}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=size}"  Style="{StaticResource MainTextBlockStyle}"></TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+            <StackPanel Grid.Column="0" Grid.Row="1">
+                <TextBlock  Margin="5,5,5,0"  Style="{StaticResource MainTextBlockStyle}">分配单元大小</TextBlock>
+                <ComboBox x:Name="clusterSizePicker" Width="80" HorizontalAlignment="Left" Margin="5" SelectedIndex="0">
+                    <ComboBoxItem>1024字节</ComboBoxItem>
+                    <ComboBoxItem>2048字节</ComboBoxItem>
+                    <ComboBoxItem>4096字节</ComboBoxItem>
+                    <ComboBoxItem>8192字节</ComboBoxItem>
+                </ComboBox>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="Format">格式化测试</Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
