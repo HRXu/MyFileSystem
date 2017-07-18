@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace DiskOperation
 {
@@ -161,8 +162,17 @@ namespace DiskOperation
             len = len << 9;
 
             UInt32 lenhigh = (UInt32)(len >> 32);
-            SetFilePointer(DiskHandle, (uint)len,ref lenhigh, FILE_BEGIN);
-            ReadFile(DiskHandle, buffer, 512, ref length, IntPtr.Zero);
+            var i=SetFilePointer(DiskHandle, (uint)len,ref lenhigh, FILE_BEGIN);
+            if (i == 0xffffffff)
+            {
+                var errCode = Marshal.GetLastWin32Error();
+                IntPtr tempptr = IntPtr.Zero;
+                string msg = null;
+                FormatMessage(0x1300, ref tempptr, errCode, 0, ref msg, 255, ref tempptr);
+                return null;
+            }
+            var res=ReadFile(DiskHandle, buffer, 512, ref length, IntPtr.Zero);
+            if (res == false) return null;
             CloseHandle(DiskHandle);
             return buffer;
         }
@@ -190,15 +200,9 @@ namespace DiskOperation
                 IntPtr tempptr = IntPtr.Zero;
                 string msg = null;
                 FormatMessage(0x1300, ref tempptr, errCode, 0, ref msg, 255, ref tempptr);
-                ;
+                return false;
             }
             bool res=WriteFile(DiskHandle, buffer, (uint)buffer.Length, ref length, IntPtr.Zero);
-
-            var errCode1 = Marshal.GetLastWin32Error();
-            IntPtr tempptr1 = IntPtr.Zero;
-            string msg1 = null;
-            FormatMessage(0x1300, ref tempptr1, errCode1, 0, ref msg1, 255, ref tempptr1);
-
             CloseHandle(DiskHandle);
 
             return res;
@@ -226,6 +230,36 @@ namespace DiskOperation
             CloseHandle(DiskHandle);
             return buffer;
         }
+
+        /*static public async Task<byte[]>  ReadAsync(string drivename, UInt32 sector)
+        {
+            IntPtr DiskHandle = CreateFile(drivename, GENERIC_READ, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
+            byte[] buffer = new byte[512];
+            uint length = 0;
+
+            UInt64 len = sector;//偏移量 (uint)(len >> 32)
+            len = len << 9;
+
+            UInt32 lenhigh = (UInt32)(len >> 32);
+            var i = SetFilePointer(DiskHandle, (uint)len, ref lenhigh, FILE_BEGIN);
+            if (i == 0xffffffff)
+            {
+                var errCode = Marshal.GetLastWin32Error();
+                IntPtr tempptr = IntPtr.Zero;
+                string msg = null;
+                FormatMessage(0x1300, ref tempptr, errCode, 0, ref msg, 255, ref tempptr);
+                return null;
+            }
+
+
+            await Task.Run(()=> 
+            {
+                ReadFile(DiskHandle, buffer, 512, ref length, IntPtr.Zero);
+            });
+
+            CloseHandle(DiskHandle);
+            return buffer;
+        }*/
     }
     public struct PartitonInfo
     {
