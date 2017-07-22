@@ -262,8 +262,39 @@ namespace XFileSystemSlim
             //类型
             file.Type = content[46];
 
+            file.Length = content[47];
             file.Location = sector;
             return file;
+        }
+
+        /// <summary>
+        /// 设置文件头信息
+        /// </summary>
+        /// <param name="drivename"></param>
+        /// <param name="fat"></param>
+        /// <returns></returns>
+        public static ErrorCode SetFileInfo(string drivename, FileInfo fat)
+        {
+            byte[] buffer = DiskRW.read(drivename, fat.Location);
+
+            //name
+            for (int i = 0; i < 48; i++)
+            {
+                buffer[i] = 0;
+            }
+            byte[] name = Encoding.Unicode.GetBytes(fat.Name);
+            name.CopyTo(buffer, 0);
+            //扩展名
+            name = Encoding.Unicode.GetBytes(fat.Extension);
+            name.CopyTo(buffer, 32);
+
+            //类型文件长
+            buffer[46] = fat.Type;
+            buffer[47] = fat.Length;
+
+            bool res = DiskRW.write(drivename, fat.Location, buffer);
+            if (!res) return ErrorCode.Fail;
+            return ErrorCode.Success;
         }
 
         /// <summary>
@@ -348,6 +379,63 @@ namespace XFileSystemSlim
             }
             return 0;
         }
+        /// <summary>
+        /// 写文件
+        /// </summary>
+        /// <param name="drivename">驱动器名</param>
+        /// <param name="volume">卷名</param>
+        /// <param name="fat">文件头</param>
+        /// <param name="content">写入的内容</param>
+        /// <returns></returns>
+        public static ErrorCode WriteFile(string drivename,VolumeInfo volume,ref FileInfo fat,byte[] content)
+        {
+            uint SectorCount = (UInt32)(content.Length >> 9);
+            uint i = (UInt32)(content.Length % 512);
+            if (i == 0) SectorCount++; //content是否是512整数倍，不是的话要多出一个扇区存剩余的内容
+
+            var blockList = GetFreeBlock(drivename, SectorCount, volume);
+            if (blockList == null) return ErrorCode.LackOfSpace;
+
+            AppendBlock(drivename, volume, ref fat, blockList);
+            //写入文件内容
+            UInt32 j = 0;//文件内容下标
+            foreach (var block in blockList)
+            {            
+                var b = new byte[512];
+                Array.Copy(content, j, b, 0, 512);
+                DiskRW.write(drivename, block, b);
+            }
+
+            return ErrorCode.Success;
+        }
+
+        /// <summary>
+        /// 向某个空文件添加内容块列表
+        /// </summary>
+        /// <param name="drivename">驱动器</param>
+        /// <param name="volumeinfo">卷信息</param>
+        /// <param name="file">文件头的引用</param>
+        /// <param name="blocks">内容块列表</param>
+        /// <returns></returns>
+        static ErrorCode AppendBlock(string drivename,VolumeInfo volumeinfo,ref FileInfo file, List<UInt32> blocks)
+        {
+            byte[] content = DiskRW.read(drivename, file.Location);
+
+            //i为file头的索引,j为List的索引
+            int j = 0;
+            for (UInt32 i = 48; i < content.Length; i+=4,j++)
+            {
+                content[i] = (byte)(blocks[j]);
+                content[i] = (byte)(blocks[j] >> 8);
+                content[i] = (byte)(blocks[j] >> 16);
+                content[i] = (byte)(blocks[j] >> 24);
+            }
+            //文件长度
+            content[47] = (byte)j;
+            //写回磁盘
+            DiskRW.write(drivename, file.Location, content);
+            return ErrorCode.Success;          
+        }
     }
     public class FileInfo
     {
@@ -362,6 +450,9 @@ namespace XFileSystemSlim
 
         //位置(扇区)
         public UInt32 Location { get; set; }
+
+        //长度(单位:扇区)
+        public byte Length { get; set; }
     } 
     public class VolumeInfo
     {

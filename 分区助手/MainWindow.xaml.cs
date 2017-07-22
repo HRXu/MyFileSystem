@@ -194,7 +194,7 @@ namespace 分区助手
         }
 
         /// <summary>
-        /// 格式化
+        /// 格式化XFSS
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -249,6 +249,16 @@ namespace 分区助手
                 return;
             }
             controller.erase();
+        }
+
+        /// <summary>
+        /// 格式化为XFSS
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FormatXFSS_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 

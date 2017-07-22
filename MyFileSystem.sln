@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MisakaDiskOperation", "Misa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XFileSystemSlim", "XFileSystemSlim\XFileSystemSlim.csproj", "{1D21C60D-BB03-4810-B2D3-292C579E6CE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "文件管理器Slim", "文件管理器Slim\文件管理器Slim.csproj", "{3D42420E-BF88-4750-884F-8C723D351779}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1D21C60D-BB03-4810-B2D3-292C579E6CE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D21C60D-BB03-4810-B2D3-292C579E6CE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D21C60D-BB03-4810-B2D3-292C579E6CE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D42420E-BF88-4750-884F-8C723D351779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D42420E-BF88-4750-884F-8C723D351779}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D42420E-BF88-4750-884F-8C723D351779}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D42420E-BF88-4750-884F-8C723D351779}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -124,7 +124,8 @@
                     <ComboBoxItem>4096字节</ComboBoxItem>
                     <ComboBoxItem>8192字节</ComboBoxItem>
                 </ComboBox>
-                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="Format">格式化测试</Button>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="Format">格式化XFS</Button>
+                <Button Margin="5,5,5,0" Width="100" HorizontalAlignment="Left" Click="FormatXFSS_Click">格式化XFSS</Button>
             </StackPanel>
         </Grid>
     </Grid>

@@ -11,9 +11,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using 文件管理器Slim.Struct;
 
-namespace 文件管理器
+namespace 文件管理器Slim
 {
     /// <summary>
     /// SelectVolumeWindow.xaml 的交互逻辑
@@ -24,7 +27,7 @@ namespace 文件管理器
         ObservableCollection<Partition> currentPartitionList = new ObservableCollection<Partition>();
         public SelectVolumeWindow()
         {
-            
+
             InitializeComponent();
             init();
             this.DriveListBox.ItemsSource = driveList;
@@ -50,7 +53,7 @@ namespace 文件管理器
         }
 
         /// <summary>
-        /// 写入全局变量
+        /// 选中某个驱动器
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -62,7 +65,9 @@ namespace 文件管理器
             readPartitionTable();
             e.Handled = true;
         }
-
+        /// <summary>
+        /// 读取MBR分区
+        /// </summary>
         void readPartitionTable()
         {
             currentPartitionList.Clear();
@@ -77,8 +82,8 @@ namespace 文件管理器
                 UInt32 s3 = MBR[10 + j];
                 UInt32 s4 = MBR[11 + j];
                 UInt32 temp = (s4 << 24) + (s3 << 16) + (s2 << 8) + s1;
-                part.StartSector = temp.ToString();
-                part.SS = temp;
+
+                part.SectorCount = temp;
 
                 //长度 (扇区)
                 s1 = MBR[12 + j];
@@ -86,50 +91,25 @@ namespace 文件管理器
                 s3 = MBR[14 + j];
                 s4 = MBR[15 + j];
                 temp = (s4 << 24) + (s3 << 16) + (s2 << 8) + s1;
-                part.SC = temp;
+                part.SectorCount = temp;
 
                 //长度为零说明没有这个分区
                 if (temp == 0) continue;
-
-                part.SectorCount = temp.ToString();
-
                 currentPartitionList.Add(part);
             }
         }
 
+        /// <summary>
+        /// 选中某个分区
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void VolumeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var item = e.AddedItems[0] as Partition;
-            if (VolumeListBox.SelectedIndex == 0)
-            {
-                Data.StartSector = item.SS;
-            }
-            else
-            {
-                Data.StartSector = item.SS + 1;
-            }
+            Data.Start = item.StartSector;
+            Data.Length = item.SectorCount;
         }
     }
-
-    public class diskinfo
-    {
-        public string diskname { get; set; }
-        public UInt32 sectors { get; set; }
-        public string model { get; set; }
-        public UInt32 partition { get; set; }
-    }
-
-    /// <summary>
-    /// 分区信息，注意与MisakaDiskOperation之中的PartitionInfo用处不同
-    /// 用与保存从MBR中读取的磁盘信息
-    /// </summary>
-    public class Partition
-    {
-        public string StartSector { get; set; }
-        //起始扇区偏移
-        public UInt32 SS { get; set; }
-        public string SectorCount { get; set; }
-        //总扇区数
-        public UInt32 SC { get; set; }
-    }
 }
+
