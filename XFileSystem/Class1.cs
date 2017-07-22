@@ -796,7 +796,7 @@ namespace XFileSystem
             return ErrorCode.Success;
         }
         /// <summary>
-        /// 删除目录中某项 未测试
+        /// 删除目录中某项
         /// </summary>
         /// <param name="drivename">驱动器名</param>
         /// <param name="volumeinfo">卷信息结构体</param>
