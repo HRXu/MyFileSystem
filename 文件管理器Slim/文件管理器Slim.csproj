@@ -33,6 +33,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -61,6 +70,10 @@
     </Compile>
     <Compile Include="Struct\diskinfo.cs" />
     <Compile Include="Struct\Partition.cs" />
+    <Compile Include="XFSlim\Controller.cs" />
+    <Compile Include="XFSlim\XFSlimWindow.xaml.cs">
+      <DependentUpon>XFSlimWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -74,6 +87,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SelectVolumeWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="XFSlim\XFSlimWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -96,6 +113,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -108,6 +126,14 @@
     <ProjectReference Include="..\MisakaDiskOperation\MisakaDiskOperation.csproj">
       <Project>{676EF031-CEE8-410C-B2C2-2A5FEB2E17A8}</Project>
       <Name>MisakaDiskOperation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XFileSystemSlim\XFileSystemSlim.csproj">
+      <Project>{1d21c60d-bb03-4810-b2d3-292c579e6ce1}</Project>
+      <Name>XFileSystemSlim</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XFileSystem\XFileSystem.csproj">
+      <Project>{77093a49-c1ea-4c6a-b000-34a064cd0da1}</Project>
+      <Name>XFileSystem</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

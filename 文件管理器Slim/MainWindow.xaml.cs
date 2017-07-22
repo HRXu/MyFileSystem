@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using 文件管理器Slim.XFSlim;
+
 
 namespace 文件管理器Slim
 {
@@ -23,6 +13,14 @@ namespace 文件管理器Slim
         public MainWindow()
         {
             InitializeComponent();
+
+            SelectVolumeWindow svw = new SelectVolumeWindow();
+            svw.ShowDialog();
+
+            ///打开用于XFSlim的窗口
+            XFSlimWindow xfssw = new XFSlimWindow();
+            xfssw.ShowDialog();
+            this.Close();
         }
     }
 }
