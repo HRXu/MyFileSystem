@@ -6,6 +6,7 @@ using DiskOperation;
 using System.Windows.Forms;
 using System.IO;
 using System.Collections.Generic;
+using XFileSystemSlim;
 
 namespace 分区助手
 {
@@ -232,6 +233,7 @@ namespace 分区助手
                 d = new FormatDisk(controller.partitionSelected.SS, controller.partitionSelected.SC, unitSize, this.diskName.Text);
             }
             d.buildA();
+            output.Text = "分区完成";
         }
 
         private void partitionList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -241,6 +243,11 @@ namespace 分区助手
             controller.partitionSelected = e.AddedItems[0] as Partition;
         }
 
+        /// <summary>
+        /// 全盘擦除
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Erase(object sender, RoutedEventArgs e)
         {
             if (diskName.Text == "")
@@ -258,7 +265,10 @@ namespace 分区助手
         /// <param name="e"></param>
         private void FormatXFSS_Click(object sender, RoutedEventArgs e)
         {
-
+            if (controller.partitionSelected == null) { output.Text = "请先选择分区"; return; }
+            XFileSystemSlim.FormatOperation formatOperator = new FormatOperation(controller.partitionSelected.SS, this.diskName.Text);
+            formatOperator.build();
+            output.Text = "分区完成";
         }
     }
 

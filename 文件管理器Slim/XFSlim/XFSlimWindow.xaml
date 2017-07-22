@@ -14,8 +14,17 @@
         <ListBox x:Name="fileListBox" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        
+                    <Grid Height="50">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Path=Icon}" FontFamily="Segoe MDL2 Assets" Padding="5,0,0,0"
+                                       FontSize="30"
+                                       VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="{Binding Path=Name}" 
+                                       FontSize="16" FontFamily="Microsoft YaHei UI Light"
+                                       VerticalAlignment="Center"></TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

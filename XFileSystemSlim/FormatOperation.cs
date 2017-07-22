@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace XFileSystemSlim
 {
     //格式化为XFSS
-    class FormatOperation
+    public class FormatOperation
     {
         /// <summary>
         /// 第一个扇区

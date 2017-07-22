@@ -112,6 +112,10 @@
       <Project>{676ef031-cee8-410c-b2c2-2a5feb2e17a8}</Project>
       <Name>MisakaDiskOperation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XFileSystemSlim\XFileSystemSlim.csproj">
+      <Project>{1d21c60d-bb03-4810-b2d3-292c579e6ce1}</Project>
+      <Name>XFileSystemSlim</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

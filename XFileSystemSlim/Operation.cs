@@ -357,7 +357,7 @@ namespace XFileSystemSlim
         /// <param name="currentDirInfo"></param>
         /// <param name="drivename"></param>
         /// <param name="volume"></param>
-        /// <returns></returns>
+        /// <returns>文件头簇号</returns>
         public static UInt32 AddFile(FileInfo currentDirInfo,string drivename,VolumeInfo volume)
         {
             var currentDir = DiskRW.ReadA(drivename, currentDirInfo.Location, 1);
@@ -396,6 +396,7 @@ namespace XFileSystemSlim
             var blockList = GetFreeBlock(drivename, SectorCount, volume);
             if (blockList == null) return ErrorCode.LackOfSpace;
 
+            fat.Length = (byte)SectorCount;
             AppendBlock(drivename, volume, ref fat, blockList);
             //写入文件内容
             UInt32 j = 0;//文件内容下标

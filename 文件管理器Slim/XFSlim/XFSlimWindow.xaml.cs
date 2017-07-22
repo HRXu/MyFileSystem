@@ -23,6 +23,11 @@ namespace 文件管理器Slim.XFSlim
         public XFSlimWindow()
         {
             InitializeComponent();
+            this.fileListBox.ItemsSource = Manager.CurrentDirFilesList;
+
+            Manager.Init();
+            Manager.LoadDirContent();
         }
+
     }
 }
