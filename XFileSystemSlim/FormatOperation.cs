@@ -35,7 +35,7 @@ namespace XFileSystemSlim
         {
             fatHead = new byte[512];
 
-            byte[] name = Encoding.Unicode.GetBytes("FIRSTPART");
+            byte[] name = Encoding.ASCII.GetBytes("FIRSTPART");
             name.CopyTo(fatHead, 0);
             //目录类型
             fatHead[46] = 0;
@@ -51,10 +51,11 @@ namespace XFileSystemSlim
             DiskRW.write(drivename, transfer(0), fatHead);
 
             //组织空闲块
-            byte[] buffer = new byte[512*2];
+            byte[] buffer = new byte[512*3];
             Set(0, true, buffer);
             Set(1, true, buffer);
             Set(2, true, buffer);
+            Set(3, true, buffer);
             DiskRW.write(drivename, transfer(1), buffer);
 
 

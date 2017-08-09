@@ -83,7 +83,7 @@ namespace 文件管理器Slim
                 UInt32 s4 = MBR[11 + j];
                 UInt32 temp = (s4 << 24) + (s3 << 16) + (s2 << 8) + s1;
 
-                part.SectorCount = temp;
+                part.StartSector = temp;
 
                 //长度 (扇区)
                 s1 = MBR[12 + j];

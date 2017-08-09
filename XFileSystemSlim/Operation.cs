@@ -191,8 +191,8 @@ namespace XFileSystemSlim
         /// <returns>空闲块列表(扇区)</returns>
         public static List<UInt32>GetFreeBlock(string drivename,UInt32 count,VolumeInfo volume)
         {
-            //空闲表固定长度为2个扇区
-            byte[] freetable = DiskRW.ReadA(drivename,volume.freetableStart, 2);
+            //空闲表固定长度为3个扇区
+            byte[] freetable = DiskRW.ReadA(drivename,volume.freetableStart, 3);
 
             List<UInt32> ls = new List<uint>();
 
@@ -230,7 +230,7 @@ namespace XFileSystemSlim
             var res = new List<UInt32>();
             //文件总长1个扇区
             byte[] content = DiskRW.ReadA(drivename, info.Location, 1);
-            for (int i = 48; i < content.Length; i++)
+            for (int i = 48; i < content.Length; i+=4)
             {
                 UInt32 s = mergeByte(content[i], content[i + 1], content[i + 2], content[i + 3]);
                 if (s == 0) continue;
@@ -282,10 +282,10 @@ namespace XFileSystemSlim
             {
                 buffer[i] = 0;
             }
-            byte[] name = Encoding.Unicode.GetBytes(fat.Name);
+            byte[] name = Encoding.ASCII.GetBytes(fat.Name);
             name.CopyTo(buffer, 0);
             //扩展名
-            name = Encoding.Unicode.GetBytes(fat.Extension);
+            name = Encoding.ASCII.GetBytes(fat.Extension);
             name.CopyTo(buffer, 32);
 
             //类型文件长
@@ -361,7 +361,7 @@ namespace XFileSystemSlim
         public static UInt32 AddFile(FileInfo currentDirInfo,string drivename,VolumeInfo volume)
         {
             var currentDir = DiskRW.ReadA(drivename, currentDirInfo.Location, 1);
-            var ls = GetFreeBlock(drivename, 1, volume);
+            var ls = GetFreeBlock(drivename, 1, volume); 
             //检索当前目录的fat表
             for (int i = 48; i < currentDir.Length; i += 4)
             {
@@ -391,7 +391,7 @@ namespace XFileSystemSlim
         {
             uint SectorCount = (UInt32)(content.Length >> 9);
             uint i = (UInt32)(content.Length % 512);
-            if (i == 0) SectorCount++; //content是否是512整数倍，不是的话要多出一个扇区存剩余的内容
+            if (i != 0) SectorCount++; //content是否是512整数倍，不是的话要多出一个扇区存剩余的内容
 
             var blockList = GetFreeBlock(drivename, SectorCount, volume);
             if (blockList == null) return ErrorCode.LackOfSpace;
@@ -422,17 +422,20 @@ namespace XFileSystemSlim
         {
             byte[] content = DiskRW.read(drivename, file.Location);
 
+            //文件长度
+            content[47] = (byte)(blocks.Count);
             //i为file头的索引,j为List的索引
             int j = 0;
-            for (UInt32 i = 48; i < content.Length; i+=4,j++)
+            for (UInt32 i = 48; i < content.Length; i+=4)
             {
                 content[i] = (byte)(blocks[j]);
                 content[i] = (byte)(blocks[j] >> 8);
                 content[i] = (byte)(blocks[j] >> 16);
                 content[i] = (byte)(blocks[j] >> 24);
+                j++;
+                if (j == blocks.Count) break;
             }
-            //文件长度
-            content[47] = (byte)j;
+
             //写回磁盘
             DiskRW.write(drivename, file.Location, content);
             return ErrorCode.Success;          

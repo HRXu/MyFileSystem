@@ -11,6 +11,9 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="Button_Click" Width="40"></Button>
+        </StackPanel>
         <ListBox x:Name="fileListBox" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>

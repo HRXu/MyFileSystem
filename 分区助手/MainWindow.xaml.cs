@@ -195,7 +195,7 @@ namespace 分区助手
         }
 
         /// <summary>
-        /// 格式化XFSS
+        /// 格式化XFS
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

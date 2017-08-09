@@ -106,7 +106,8 @@ namespace 文件管理器Slim.XFSlim
             {
                 Name = s[0],
                 Extension = s[1],
-                Location = loc
+                Location = loc,
+                Type= 1,//实体文件类型
             };
             Operation.WriteFile(Data.DriveName, volume,ref fileinfo, content);
             Operation.SetFileInfo(Data.DriveName, fileinfo);
