@@ -893,6 +893,7 @@ namespace XFileSystem
         /// <returns></returns>
         public static ErrorCode WriteFile(string drivename,VolumeInfo volumeinfo,ref FileInfo fat,byte[] content)
         {
+            //BUGS
             //先计算需要多少磁盘块，然后去空闲表申请
             UInt32 clustercount = (UInt32)(content.Length / volumeinfo.Cluster);
             UInt16 nailcount = (UInt16)(content.Length % volumeinfo.Cluster);

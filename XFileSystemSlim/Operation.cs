@@ -305,10 +305,10 @@ namespace XFileSystemSlim
         /// <param name="freetableLocation"></param>
         /// <param name="start"></param>
         /// <returns></returns>
-        public static ErrorCode DeleteFile(string drivename,FileInfo info,UInt32 freetableLocation,VolumeInfo volume)
+        public static ErrorCode DeleteFile(string drivename,FileInfo info,VolumeInfo volume)
         {
             //获取空闲表 2扇区
-            byte[] freetable = DiskRW.ReadA(drivename, freetableLocation, 2);
+            byte[] freetable = DiskRW.ReadA(drivename, volume.freetableStart, 2);
             var ls = GetContent(drivename, info);
 
             //数据块写回空闲表
@@ -361,7 +361,9 @@ namespace XFileSystemSlim
         public static UInt32 AddFile(FileInfo currentDirInfo,string drivename,VolumeInfo volume)
         {
             var currentDir = DiskRW.ReadA(drivename, currentDirInfo.Location, 1);
-            var ls = GetFreeBlock(drivename, 1, volume); 
+            var ls = GetFreeBlock(drivename, 1, volume);
+
+            DiskRW.write(drivename, ls[0], new byte[512]);//复写已有内容
             //检索当前目录的fat表
             for (int i = 48; i < currentDir.Length; i += 4)
             {
@@ -389,9 +391,10 @@ namespace XFileSystemSlim
         /// <returns></returns>
         public static ErrorCode WriteFile(string drivename,VolumeInfo volume,ref FileInfo fat,byte[] content)
         {
-            uint SectorCount = (UInt32)(content.Length >> 9);
-            uint i = (UInt32)(content.Length % 512);
-            if (i != 0) SectorCount++; //content是否是512整数倍，不是的话要多出一个扇区存剩余的内容
+           UInt32 SectorCount = ((UInt32)content.Length) & 0xFFFFFE00; //除512商
+           UInt32 rest = ((UInt32)content.Length) & 0x000001FF; //除512余数
+
+            if (rest != 0) SectorCount++; //content是否是512整数倍，不是的话要多出一个扇区存剩余的内容
 
             var blockList = GetFreeBlock(drivename, SectorCount, volume);
             if (blockList == null) return ErrorCode.LackOfSpace;
@@ -403,7 +406,7 @@ namespace XFileSystemSlim
             foreach (var block in blockList)
             {            
                 var b = new byte[512];
-                Array.Copy(content, j, b, 0, 512);
+                Array.Copy(content, j, b, 0, content.Length);
                 DiskRW.write(drivename, block, b);
             }
 
@@ -429,9 +432,9 @@ namespace XFileSystemSlim
             for (UInt32 i = 48; i < content.Length; i+=4)
             {
                 content[i] = (byte)(blocks[j]);
-                content[i] = (byte)(blocks[j] >> 8);
-                content[i] = (byte)(blocks[j] >> 16);
-                content[i] = (byte)(blocks[j] >> 24);
+                content[i+1] = (byte)(blocks[j] >> 8);
+                content[i+2] = (byte)(blocks[j] >> 16);
+                content[i+3] = (byte)(blocks[j] >> 24);
                 j++;
                 if (j == blocks.Count) break;
             }

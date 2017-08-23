@@ -58,7 +58,6 @@ namespace XFileSystemSlim
             Set(3, true, buffer);
             DiskRW.write(drivename, transfer(1), buffer);
 
-
             return;
         }
 

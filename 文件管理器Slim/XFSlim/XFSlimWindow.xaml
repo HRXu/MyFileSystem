@@ -12,7 +12,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button Click="Button_Click" Width="40"></Button>
+            <Button Click="AddButton_Click"  Width="40">添加</Button>
+            <Button Click="DeleteButton_Click"  Width="40">删除</Button>
         </StackPanel>
         <ListBox x:Name="fileListBox" Grid.Row="1">
             <ListBox.ItemTemplate>

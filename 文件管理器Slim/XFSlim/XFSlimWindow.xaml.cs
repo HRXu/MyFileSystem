@@ -29,9 +29,15 @@ namespace 文件管理器Slim.XFSlim
             Manager.LoadDirContent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             Manager.AddFile();
+            Manager.LoadDirContent();
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.DeleteFile((fileListBox.SelectedItem as DisplayContent).Info);
             Manager.LoadDirContent();
         }
     }

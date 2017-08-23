@@ -113,6 +113,12 @@ namespace 文件管理器Slim.XFSlim
             Operation.SetFileInfo(Data.DriveName, fileinfo);
             return;
         }
+
+        public static void DeleteFile(XFileSystemSlim.FileInfo file)
+        {
+            Operation.DeleteFile(Data.DriveName,file,volume);
+            Operation.DeleteInDir(Data.DriveName, volume, file.Location, currentDir);
+        }
     }
     /// <summary>
     /// 用于存储的结构体，图标等
