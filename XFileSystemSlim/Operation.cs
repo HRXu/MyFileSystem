@@ -391,7 +391,7 @@ namespace XFileSystemSlim
         /// <returns></returns>
         public static ErrorCode WriteFile(string drivename,VolumeInfo volume,ref FileInfo fat,byte[] content)
         {
-           UInt32 SectorCount = ((UInt32)content.Length) & 0xFFFFFE00; //除512商
+           UInt32 SectorCount = (((UInt32)content.Length) & 0xFFFFFE00)>>9; //除512商
            UInt32 rest = ((UInt32)content.Length) & 0x000001FF; //除512余数
 
             if (rest != 0) SectorCount++; //content是否是512整数倍，不是的话要多出一个扇区存剩余的内容
